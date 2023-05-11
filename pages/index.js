@@ -1,24 +1,93 @@
 import Head from 'next/head';
+import Header from '../components/Header';
+import Main from '../components/Main';
+import Footer from '../components/Footer';
+import ReportTable from '../components/ReportTable';
 // import styles from '../styles/Home.module.css';
 import { replies } from '../data';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { cookies } from 'next/dist/client/components/headers';
 
-export default function Home() {
+export default function CookieStandAdmin() {
+  const [cookieStands, setCookieStands] = useState([]);
+  const [grandTotal, setGrandTotal] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+  // const hours = ['6am', '7am', '8am', '9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm'];
 
-  const [cookieStand, setCookieStand] = useState("Report Table Coming Soon...");
+
+
+  useEffect((event) => {
+    // Calculate total of all stores
+    let array = [];
+    let subtotal = 0;
+
+    for (let i = 0; i < 15; i++) {
+      subtotal = 0;
+
+      cookieStands.forEach((stand) => {
+        subtotal += stand.salesArray[i]
+      })
+
+      array.push(subtotal);
+    }
+
+    // Save new store to state
+    setGrandTotal(array);
+
+  }, [cookieStands])
 
   function formHandler(event) {
     event.preventDefault();
 
-    let cookieStand = {
-      location: event.target.elements.location.value,
-      minCust: event.target.elements.minCust.value,
-      maxCust: event.target.elements.maxCust.value,
-      avgCookies: event.target.elements.avgCookies.value
+    let location = event.target.elements.location.value;
+    let minCust = event.target.elements.minCust.value;
+    let maxCust = event.target.elements.maxCust.value;
+    let avgCookies = event.target.elements.avgCookies.value;
+
+    // Create new store
+    let newStoreSalesArray = calcSales(parseFloat(minCust), parseFloat(maxCust), parseFloat(avgCookies));
+
+    let newCookieStand = {
+      location: location,
+      minCust: minCust,
+      maxCust: maxCust,
+      avgCookies: avgCookies,
+      salesArray: newStoreSalesArray,
     }
 
-    setCookieStand(JSON.stringify(cookieStand))
+    setCookieStands([...cookieStands, newCookieStand])
+
+    event.target.reset();
   }
+
+  function calcSales(minCust, maxCust, avgCookies) {
+    let array = [];
+
+    for (let i = 0; i < 14; i++) {
+      array[i] = Math.round(Math.round(Math.floor(Math.random() * (maxCust - minCust + 1) + minCust)) * avgCookies)
+    }
+
+    // Calculate total
+    let total = 0;
+
+    array.forEach(item => {
+      total += item;
+    })
+
+    array.push(total)
+
+    return array
+  }
+
+  function calcStoreTotal(salesArray) {
+    let total = 0;
+
+    salesArray.forEach(item => {
+      total += item;
+    })
+
+    return total
+  }
+
 
   return (
     <div className="">
@@ -28,53 +97,20 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <header className="flex items-center justify-between p-4 bg-green-500 text-gray-50">
-        <h1 className="text-4xl text-black">Cookie Stand Admin</h1>
-      </header>
+      <Header></Header>
 
-      <main className="w-3/4 mx-auto">
+      <Main 
+        formHandler = {formHandler}
+        cookieStands = {cookieStands}
+        grandTotal = {grandTotal}
+      
+      />
 
-        <div className="m-4 bg-green-300 rounded-md">
+      <Footer
+        cookieStands={cookieStands}
 
-          <form onSubmit={formHandler} className="flex flex-col">
-            <h2 className="text-3xl text-center rounded-t-md">Create Cookie Stand</h2>
+      />
 
-            <div className="flex p-2">
-              <label className="pr-2 pl-2">Location </label>
-              <input name="location" className="grow" />
-            </div>
-
-            <div className="flex flex-row p-2">
-
-              <div className="p-2 flex flex-col w-1/4">
-                <label>Minimum Customers per Hour</label>
-                <input name="minCust" className="flex-auto pl-1" />
-              </div>
-
-              <div className="p-2 flex flex-col w-1/4">
-                <label>Maximum Customers per Hour</label>
-                <input name="maxCust" className="flex-auto pl-1" />
-              </div>
-
-              <div className="p-2 flex flex-col w-1/4">
-                <label>Average Cookies per Sale</label>
-                <input name="avgCookies" className="flex-auto pl-1" />
-              </div>
-
-              <button className="p-2 bg-green-600 text-black w-1/4 grow">Create</button>
-
-            </div>
-
-          </form>
-        </div>
-
-        <p className="m-4 text-center">{cookieStand}</p>
-
-      </main>
-
-      <footer className="p-3 bg-green-500 text-gray-50">
-        <p className="text-black">&copy;2023</p>
-      </footer>
     </div>
   );
 }

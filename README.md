@@ -1,12 +1,16 @@
-# LAB - Class 37
+# Project: Cookie Stand Admin
 
-## Project: Welcome to React, Next.js, and TailwindCSS
+## Lab 37
 
 - Have `<Head>` component with page title set to Cookie Stand Admin
 - Have a `<header>` component that matches spec.
 - Have a `<main>` component containing `<form>` and a placeholder component showing JSON string of last created Cookie Stand.
 - Have a `<footer>` component that matches spec.
 - Style app using TailwindCSS utility classes.
+
+## Lab 38
+
+- Components: Head, Header, Main, CreateForm, ReportTable, Footer
 
 ## Author: Mike Shen
 
