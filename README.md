@@ -17,7 +17,6 @@
 - LoginForm
 - CookieStandAdmin - API connectivity
 - CookieStandTable - add delete
-- 
 
 ## Author: Mike Shen
 
