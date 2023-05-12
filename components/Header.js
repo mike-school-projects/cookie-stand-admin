@@ -15,7 +15,7 @@ export default function Header(props) {
           <>
 
             <div>
-              <button className="bg-white rounded-md text-black px-2 py-0.5 m-1">User: {user.username}</button>
+              <button className="bg-white rounded-md text-black px-2 py-0.5 m-1">{user.username}</button>
               <button className="bg-green-700 rounded-md px-2 py-0.5 m-1" onClick={logout}>Logout</button>
               <button className="bg-white rounded-md text-black px-2 py-0.5 m-1">Overview</button>
             </div>

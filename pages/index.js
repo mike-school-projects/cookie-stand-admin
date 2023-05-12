@@ -6,7 +6,6 @@ import Header from '../components/Header';
 import CookieStandAdmin from '../components/CookieStandAdmin';
 import Footer from '../components/Footer';
 import { useEffect, useState } from 'react';
-import { cookies } from "next/dist/client/components/headers";
 
 export default function Home() {
   const [cookieStands, setCookieStands] = useState([]);
@@ -60,7 +59,6 @@ export default function Home() {
         let maxCust = resources[i].maximum_customers_per_hour;
         let avgCookies = resources[i].average_cookies_per_sale;
         let id = resources[i].id;
-        console.log(resources[i])
 
         // Create new store
         let newStoreSalesArray = calcSales(parseFloat(minCust), parseFloat(maxCust), parseFloat(avgCookies));
@@ -100,7 +98,7 @@ export default function Home() {
 
     let newCookieStand = {
       location: location,
-      owner: "admin",
+      owner: user.id,
       minimum_customers_per_hour: minCust,
       maximum_customers_per_hour: maxCust,
       average_cookies_per_sale: avgCookies,

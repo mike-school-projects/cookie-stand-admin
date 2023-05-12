@@ -29,12 +29,14 @@ export default function useResource() {
     }
 
     async function createResource(info) {
+        // Modified this to add the trailing /
+        let url = apiUrl + '/'
 
         try {
             const options = config();
             options.method = "POST",
             options.body = JSON.stringify(info);
-            await fetch(apiUrl, options);
+            await fetch(url, options);
             mutate(); // mutate causes complete collection to be refetched
         } catch (err) {
             handleError(err);

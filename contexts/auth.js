@@ -37,9 +37,10 @@ export function AuthProvider(props) {
         const response = await fetch(tokenUrl, options);
 
         const data = await response.json();
+        console.log("data:" , data)
 
         const decodedAccess = jwt.decode(data.access);
-        console.log(decodedAccess)
+        console.log("data from API: ", decodedAccess)
 
         // Set user details to user
         const newState = {
