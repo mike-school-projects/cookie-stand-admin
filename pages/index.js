@@ -1,18 +1,25 @@
+import { useAuth } from "../contexts/auth";
+import useResource from "@/hooks/useResource"
+import LoginForm from '../components/LoginForm';
 import Head from 'next/head';
 import Header from '../components/Header';
-import Main from '../components/Main';
+import CookieStandAdmin from '../components/CookieStandAdmin';
 import Footer from '../components/Footer';
-import ReportTable from '../components/ReportTable';
-// import styles from '../styles/Home.module.css';
-import { replies } from '../data';
 import { useEffect, useState } from 'react';
-import { cookies } from 'next/dist/client/components/headers';
+import { cookies } from "next/dist/client/components/headers";
 
-export default function CookieStandAdmin() {
+export default function Home() {
   const [cookieStands, setCookieStands] = useState([]);
   const [grandTotal, setGrandTotal] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-  // const hours = ['6am', '7am', '8am', '9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm'];
+  const [isLoggedIn, setLogin] = useState(false);
+  const [userName, setUserName] = useState("Me");
 
+  // Creates context to make 3 items globally accessible
+  // login and logout are functions in auth.js
+  // user is state object in auth.js.  Initially set to null.  login function will use API to pull user properties from backend
+  const { user, login, logout } = useAuth();
+
+  const { resources, loading, fetchResource, deleteResource, createResource } = useResource();
 
 
   useEffect((event) => {
@@ -35,8 +42,53 @@ export default function CookieStandAdmin() {
 
   }, [cookieStands])
 
+
+  useEffect(() => {
+    function populateTable() {
+      if (resources == null) {
+        return
+      }
+      if (resources.length == 0) {
+        return
+      }
+
+      let array = [];
+
+      for (let i = 0; i < resources.length; i++) {
+        let location = resources[i].location;
+        let minCust = resources[i].minimum_customers_per_hour;
+        let maxCust = resources[i].maximum_customers_per_hour;
+        let avgCookies = resources[i].average_cookies_per_sale;
+        let id = resources[i].id;
+        console.log(resources[i])
+
+        // Create new store
+        let newStoreSalesArray = calcSales(parseFloat(minCust), parseFloat(maxCust), parseFloat(avgCookies));
+
+        let newCookieStand = {
+          location: location,
+          minCust: minCust,
+          maxCust: maxCust,
+          avgCookies: avgCookies,
+          salesArray: newStoreSalesArray,
+          id: id,
+        }
+        array.push(newCookieStand)
+
+      }
+
+      setCookieStands(array)
+    }
+
+    populateTable()
+
+  }, [resources])
+
+
+
   function formHandler(event) {
     event.preventDefault();
+
 
     let location = event.target.elements.location.value;
     let minCust = event.target.elements.minCust.value;
@@ -48,13 +100,25 @@ export default function CookieStandAdmin() {
 
     let newCookieStand = {
       location: location,
-      minCust: minCust,
-      maxCust: maxCust,
-      avgCookies: avgCookies,
-      salesArray: newStoreSalesArray,
+      owner: "admin",
+      minimum_customers_per_hour: minCust,
+      maximum_customers_per_hour: maxCust,
+      average_cookies_per_sale: avgCookies,
+      hourly_sales: newStoreSalesArray,
     }
 
-    setCookieStands([...cookieStands, newCookieStand])
+    createResource(newCookieStand)
+
+    event.target.reset();
+  }
+
+  function loginFormHandler(event) {
+    event.preventDefault();
+
+    let userName = event.target.elements.userName.value;
+    let password = event.target.elements.password.value;
+
+    login(userName, password)
 
     event.target.reset();
   }
@@ -89,7 +153,9 @@ export default function CookieStandAdmin() {
   }
 
 
+
   return (
+
     <div className="">
       <Head>
         <title>Cookie Stand Admin</title>
@@ -97,20 +163,30 @@ export default function CookieStandAdmin() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Header></Header>
-
-      <Main 
-        formHandler = {formHandler}
-        cookieStands = {cookieStands}
-        grandTotal = {grandTotal}
-      
+      <Header
+        userName={userName}
       />
+
+      {user
+        ? <CookieStandAdmin
+          formHandler={formHandler}
+          cookieStands={cookieStands}
+          grandTotal={grandTotal}
+          stands={resources || []}
+          deleteStand={deleteResource}
+        />
+        : <LoginForm
+          loginFormHandler={loginFormHandler}
+        />
+
+      }
 
       <Footer
         cookieStands={cookieStands}
-
+        isLoggedIn={isLoggedIn}
       />
 
     </div>
+
   );
 }

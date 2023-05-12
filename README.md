@@ -12,6 +12,13 @@
 
 - Components: Head, Header, Main, CreateForm, ReportTable, Footer
 
+## Lab 39
+
+- LoginForm
+- CookieStandAdmin - API connectivity
+- CookieStandTable - add delete
+- 
+
 ## Author: Mike Shen
 
 ## Links and Resources

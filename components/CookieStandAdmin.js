@@ -1,7 +1,10 @@
 import CreateForm from '../components/CreateForm'
 import ReportTable from '../components/ReportTable';
+import useResource from "@/hooks/useResource"
 
 export default function Main(props) {
+  const { deleteResource } = useResource();
+
   return (
     <main className="w-3/4 mx-auto">
 
@@ -16,6 +19,8 @@ export default function Main(props) {
       <ReportTable
         cookieStands={props.cookieStands}
         grandTotal={props.grandTotal}
+        onDelete={deleteResource}
+
       />
 
     </main>
