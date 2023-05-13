@@ -29,14 +29,11 @@ export default function useResource() {
     }
 
     async function createResource(info) {
-        // Modified this to add the trailing /
-        let url = apiUrl + '/'
-
         try {
             const options = config();
             options.method = "POST",
             options.body = JSON.stringify(info);
-            await fetch(url, options);
+            await fetch(apiUrl, options);
             mutate(); // mutate causes complete collection to be refetched
         } catch (err) {
             handleError(err);
@@ -46,9 +43,7 @@ export default function useResource() {
     async function deleteResource(id) {
 
         try {
-            // Had to change this to add the / to make it work
-            // const url = apiUrl + id;
-            const url = apiUrl + "/" + id;
+            const url = apiUrl + id;
             const options = config();
             options.method = "DELETE";
             await fetch(url, options);

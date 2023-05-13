@@ -1,7 +1,7 @@
 import { useAuth } from "../contexts/auth";
 
-export default function Header(props) {
-  const { user, login, logout } = useAuth();
+export default function Header() {
+  const { user, logout } = useAuth();
 
   return (
     <header className="flex justify-center p-4 bg-green-500 text-gray-50">

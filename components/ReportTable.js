@@ -2,6 +2,7 @@ import useResource from "@/hooks/useResource"
 
 export default function ReportTable(props) {
   const { deleteResource } = useResource();
+  const hourArray = ['6am', '7am', '8am', '9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm']
 
   return (
     <>
@@ -11,33 +12,29 @@ export default function ReportTable(props) {
 
         <table className='table-fixed mx-auto m-4'>
           <thead>
+            {/* Header Row */}
             <tr className="bg-green-500">
               <th className="pr-1 pl-1 border-2 border-green-600 text-left">Location</th>
-              <th className="pr-1 pl-1 border-2 border-green-600">6am</th>
-              <th className="pr-1 pl-1 border-2 border-green-600">7am</th>
-              <th className="pr-1 pl-1 border-2 border-green-600">8am</th>
-              <th className="pr-1 pl-1 border-2 border-green-600">9am</th>
-              <th className="pr-1 pl-1 border-2 border-green-600">10am</th>
-              <th className="pr-1 pl-1 border-2 border-green-600">11am</th>
-              <th className="pr-1 pl-1 border-2 border-green-600">12pm</th>
-              <th className="pr-1 pl-1 border-2 border-green-600">1pm</th>
-              <th className="pr-1 pl-1 border-2 border-green-600">2pm</th>
-              <th className="pr-1 pl-1 border-2 border-green-600">3pm</th>
-              <th className="pr-1 pl-1 border-2 border-green-600">4pm</th>
-              <th className="pr-1 pl-1 border-2 border-green-600">5pm</th>
-              <th className="pr-1 pl-1 border-2 border-green-600">6pm</th>
-              <th className="pr-1 pl-1 border-2 border-green-600">7pm</th>
+
+              {hourArray.map((hour, idx) => {
+                return (
+                  <th className="pr-1 pl-1 border-2 border-green-600" key={idx}>{hour}</th>
+                )
+              })}
+
               <th className="pr-1 pl-1 border-2 border-green-600 text-left">Totals</th>
             </tr>
           </thead>
+
           <tbody>
 
+            {/* Store Rows */}
             {props.cookieStands.map((store, idx) => {
               return (
                 <tr key={store.id} className="odd:bg-green-300 even:bg-green-200">
                   <td className="flex text-left border-2 border-green-600 font-bold pl-3 w-full">{store.location}
-                  
-                  <svg
+
+                    <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 20 20"
                       fill="currentColor"
@@ -48,29 +45,17 @@ export default function ReportTable(props) {
                       />
                     </svg></td>
 
-
-                  <td className="text-center border-2 border-green-600">{store.salesArray[0]}</td>
-                  <td className="text-center border-2 border-green-600">{store.salesArray[1]}</td>
-                  <td className="text-center border-2 border-green-600">{store.salesArray[2]}</td>
-                  <td className="text-center border-2 border-green-600">{store.salesArray[3]}</td>
-                  <td className="text-center border-2 border-green-600">{store.salesArray[4]}</td>
-                  <td className="text-center border-2 border-green-600">{store.salesArray[5]}</td>
-                  <td className="text-center border-2 border-green-600">{store.salesArray[6]}</td>
-                  <td className="text-center border-2 border-green-600">{store.salesArray[7]}</td>
-                  <td className="text-center border-2 border-green-600">{store.salesArray[8]}</td>
-                  <td className="text-center border-2 border-green-600">{store.salesArray[9]}</td>
-                  <td className="text-center border-2 border-green-600">{store.salesArray[10]}</td>
-                  <td className="text-center border-2 border-green-600">{store.salesArray[11]}</td>
-                  <td className="text-center border-2 border-green-600">{store.salesArray[12]}</td>
-                  <td className="text-center border-2 border-green-600">{store.salesArray[13]}</td>
-                  <td className="text-center border-2 border-green-600">{store.salesArray[14]}</td>
+                  {store.salesArray.map((hour, idx) => {
+                    return (
+                      <td className="text-center border-2 border-green-600" key={idx}>{hour}</td>
+                    )
+                  })}
 
                 </tr>
               )
             })}
 
-
-
+            {/* Total Row */}
             <tr className="bg-green-500">
               <th className="text-left border-2 border-green-600">Totals</th>
               {props.grandTotal.map((hour, idx) => {
@@ -80,15 +65,8 @@ export default function ReportTable(props) {
               })}
             </tr>
 
-
-
           </tbody>
-
         </table>
-
-
-
-
 
       }
 

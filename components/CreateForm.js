@@ -1,6 +1,6 @@
 export default function CreateForm(props) {
   return (
-    <form onSubmit={props.formHandler} className="flex flex-col">
+    <form onSubmit={props.createTable} className="flex flex-col">
 
       <div className="flex m-4">
 
@@ -9,7 +9,7 @@ export default function CreateForm(props) {
           <input name="location" className="px-2 grow" placeholder="Cookie Stand Location"/>
         </div>
 
-        <button className="p-2 bg-green-600 text-black grow rounded-md">Create</button>
+        <button className="p-2 bg-green-600 text-black grow rounded-md" tabIndex={-1}>Create</button>
 
       </div>
 

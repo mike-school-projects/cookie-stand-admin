@@ -11,80 +11,26 @@ export default function Home() {
   const [cookieStands, setCookieStands] = useState([]);
   const [grandTotal, setGrandTotal] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
   const [isLoggedIn, setLogin] = useState(false);
-  const [userName, setUserName] = useState("Me");
-
-  // Creates context to make 3 items globally accessible
-  // login and logout are functions in auth.js
-  // user is state object in auth.js.  Initially set to null.  login function will use API to pull user properties from backend
-  const { user, login, logout } = useAuth();
-
-  const { resources, loading, fetchResource, deleteResource, createResource } = useResource();
 
 
-  useEffect((event) => {
-    // Calculate total of all stores
-    let array = [];
-    let subtotal = 0;
-
-    for (let i = 0; i < 15; i++) {
-      subtotal = 0;
-
-      cookieStands.forEach((stand) => {
-        subtotal += stand.salesArray[i]
-      })
-
-      array.push(subtotal);
-    }
-
-    // Save new store to state
-    setGrandTotal(array);
-
-  }, [cookieStands])
+  // Pulls in global context from useAuth function in auth.js file
+  const { user, login } = useAuth();
+  const { resources, createResource } = useResource();
 
 
-  useEffect(() => {
-    function populateTable() {
-      if (resources == null) {
-        return
-      }
-      if (resources.length == 0) {
-        return
-      }
+  function loginFormHandler(event) {
+    event.preventDefault();
 
-      let array = [];
+    let userName = event.target.elements.userName.value;
+    let password = event.target.elements.password.value;
 
-      for (let i = 0; i < resources.length; i++) {
-        let location = resources[i].location;
-        let minCust = resources[i].minimum_customers_per_hour;
-        let maxCust = resources[i].maximum_customers_per_hour;
-        let avgCookies = resources[i].average_cookies_per_sale;
-        let id = resources[i].id;
+    login(userName, password)
 
-        // Create new store
-        let newStoreSalesArray = calcSales(parseFloat(minCust), parseFloat(maxCust), parseFloat(avgCookies));
-
-        let newCookieStand = {
-          location: location,
-          minCust: minCust,
-          maxCust: maxCust,
-          avgCookies: avgCookies,
-          salesArray: newStoreSalesArray,
-          id: id,
-        }
-        array.push(newCookieStand)
-
-      }
-
-      setCookieStands(array)
-    }
-
-    populateTable()
-
-  }, [resources])
+    event.target.reset();
+  }
 
 
-
-  function formHandler(event) {
+  function createTable(event) {
     event.preventDefault();
 
 
@@ -110,16 +56,6 @@ export default function Home() {
     event.target.reset();
   }
 
-  function loginFormHandler(event) {
-    event.preventDefault();
-
-    let userName = event.target.elements.userName.value;
-    let password = event.target.elements.password.value;
-
-    login(userName, password)
-
-    event.target.reset();
-  }
 
   function calcSales(minCust, maxCust, avgCookies) {
     let array = [];
@@ -140,16 +76,64 @@ export default function Home() {
     return array
   }
 
-  function calcStoreTotal(salesArray) {
-    let total = 0;
 
-    salesArray.forEach(item => {
-      total += item;
-    })
+  // Creates cookieStands array if resources changes
+  useEffect(() => {
+    // Check to see if resources is valid
+    if (resources == null) {
+      return
+    }
 
-    return total
-  }
+    // Create array of cookieStands
+    let array = [];
 
+    for (let i = 0; i < resources.length; i++) {
+      let location = resources[i].location;
+      let minCust = resources[i].minimum_customers_per_hour;
+      let maxCust = resources[i].maximum_customers_per_hour;
+      let avgCookies = resources[i].average_cookies_per_sale;
+      let id = resources[i].id;
+
+      // Create new store
+      let newStoreSalesArray = calcSales(parseFloat(minCust), parseFloat(maxCust), parseFloat(avgCookies));
+
+      let newCookieStand = {
+        location: location,
+        minCust: minCust,
+        maxCust: maxCust,
+        avgCookies: avgCookies,
+        salesArray: newStoreSalesArray,
+        id: id,
+      }
+      array.push(newCookieStand)
+
+    }
+
+    // Set cookieStands state object
+    setCookieStands(array)
+
+  }, [resources])
+
+
+  // Calculate total of all stores if cookieStands changes
+  useEffect((event) => {
+    let array = [];
+    let subtotal = 0;
+
+    for (let i = 0; i < 15; i++) {
+      subtotal = 0;
+
+      cookieStands.forEach((stand) => {
+        subtotal += stand.salesArray[i]
+      })
+
+      array.push(subtotal);
+    }
+
+    // Save new store to state
+    setGrandTotal(array);
+
+  }, [cookieStands])
 
 
   return (
@@ -162,16 +146,14 @@ export default function Home() {
       </Head>
 
       <Header
-        userName={userName}
       />
 
       {user
         ? <CookieStandAdmin
-          formHandler={formHandler}
+          createTable={createTable}
           cookieStands={cookieStands}
           grandTotal={grandTotal}
-          stands={resources || []}
-          deleteStand={deleteResource}
+
         />
         : <LoginForm
           loginFormHandler={loginFormHandler}
@@ -181,7 +163,6 @@ export default function Home() {
 
       <Footer
         cookieStands={cookieStands}
-        isLoggedIn={isLoggedIn}
       />
 
     </div>

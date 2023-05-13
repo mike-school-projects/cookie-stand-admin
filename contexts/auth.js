@@ -3,12 +3,13 @@ import jwt from 'jsonwebtoken';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const tokenUrl = baseUrl + '/api/token/';
 
+// Creates context that can be accessed elsewhere
 const AuthContext = createContext();
 
 export function useAuth() {
-    // Creates context called auth that can be accessed elsewhere
 
     const auth = useContext(AuthContext);
+
     if (!auth) {
         throw new Error('You forgot AuthProvider!');
     }
@@ -25,6 +26,7 @@ export function AuthProvider(props) {
         logout,
     });
 
+
     async function login(username, password) {
 
         const options = {
@@ -35,22 +37,31 @@ export function AuthProvider(props) {
 
         // API hits backend with username and password to get user details
         const response = await fetch(tokenUrl, options);
-
         const data = await response.json();
-        console.log("data:" , data)
-
         const decodedAccess = jwt.decode(data.access);
-        console.log("data from API: ", decodedAccess)
+        // console.log("decoded access", decodedAccess)
 
-        // Set user details to user
-        const newState = {
-            tokens: data,
-            user: {
-                username: decodedAccess.username,
-                email: decodedAccess.email,
-                id: decodedAccess.user_id,
-            },
+
+        let newState = {
+            tokens: null,
+            user: null,
         };
+
+        // Modified to alert on bad login
+        // Creates object with user and token data
+        if (decodedAccess === null) {
+            alert("Login credentials not valid")
+        } else {
+            newState = {
+                tokens: data,
+                user: {
+                    username: decodedAccess.username,
+                    email: decodedAccess.email,
+                    id: decodedAccess.user_id,
+                },
+            };
+        }
+
 
         // Sets state for user data
         // Not sure what's up with prevState
