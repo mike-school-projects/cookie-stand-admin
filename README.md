@@ -18,6 +18,10 @@
 - CookieStandAdmin - API connectivity
 - CookieStandTable - add delete
 
+## Lab 41
+
+- Deployed to Vercel
+
 ## Author: Mike Shen
 
 ## Links and Resources
