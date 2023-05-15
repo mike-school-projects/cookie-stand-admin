@@ -1,6 +1,6 @@
 export default function CreateForm(props) {
   return (
-    <form onSubmit={props.createTable} className="flex flex-col">
+    <form onSubmit={props.createTable} className="flex flex-col min-w-1500">
 
       <div className="flex m-4">
 
@@ -14,7 +14,7 @@ export default function CreateForm(props) {
       </div>
 
 
-      <div className="flex flex-row m-4">
+      <div className="flex flex-col lg:flex-row m-4">
 
         <div className="p-2 m-2 bg-green-200 font-bold rounded-md">
           <label>MINIMUM CUSTOMERS PER HOUR</label>
