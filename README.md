@@ -26,7 +26,10 @@
 
 ## Links and Resources
 
-N/A
+https://cookie-stand-admin-pi-orpin.vercel.app/
+
+https://cookie-stand-rinqjud97-mikeshen7.vercel.app/api/v1/app/
+
 
 ## Setup
 
